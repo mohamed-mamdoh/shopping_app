@@ -7,13 +7,12 @@ class ShopChangeBottomNavState extends ShopStates{}
 class ShopLoadingHomeDataState extends ShopStates{}
 class ShopSuccessHomeDataState extends ShopStates{
    final HomeModel homeModel;
-
-  ShopSuccessHomeDataState(this.homeModel);
-
+   ShopSuccessHomeDataState(this.homeModel);
 
 }
 class ShopErrorHomeDataState extends ShopStates{
   final String error;
-
   ShopErrorHomeDataState(this.error);
 }
+class ShopSuccessCategoriesState extends ShopStates{}
+class ShopErrorCategoriesState extends ShopStates{}
