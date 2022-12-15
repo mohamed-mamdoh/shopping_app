@@ -2,35 +2,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopping_app/models/login_model/login_model.dart';
-import 'package:shopping_app/modules/shop_app/login/cubit_login/states.dart';
+
+import 'package:shopping_app/modules/shop_app/register/cubit_register/states.dart';
 import 'package:shopping_app/shared/network/end_points.dart';
 import 'package:shopping_app/shared/network/remote/dio_helper.dart';
 
-class ShopLoginCubit extends Cubit<ShopLoginStates>{
-
-  ShopLoginCubit():super (ShopLoginInitialState());
-
-  static ShopLoginCubit get(context)=>BlocProvider.of(context);
+class ShopRegisterCubit extends Cubit<ShopRegisterStates>{
+  ShopRegisterCubit():super (ShopRegisterInitialState());
+  static ShopRegisterCubit get(context)=>BlocProvider.of(context);
     UserModel? loginModel;
-  void userLogin({
-  required String email,
+  void userRegister({
+    required String name,
+    required String email,
     required String password,
+    required String phone,
 }){
-    emit(ShopLoginLoadingState());
+    emit(ShopRegisterLoadingState());
     DioHelper.postData(
-        url:LOGIN,
+        url:REGISTER,
         data: {
+          'name':name,
           'email':email,
           'password':password,
+          'phone':phone
 
         },
     ).then((value){
       print(value?.data);
       loginModel=UserModel.fromJson(value?.data);
-      emit(ShopLoginSuccessState(loginModel!));
+      emit(ShopRegisterSuccessState(loginModel!));
     }).catchError((error){
       print(error.toString());
-      emit(ShopLoginErrorState(error.toString()));
+      emit(ShopRegisterErrorState(error.toString()));
 
     });
   }
@@ -41,7 +44,8 @@ class ShopLoginCubit extends Cubit<ShopLoginStates>{
   void changePasswordVisibility(){
     isPassword = !isPassword;
     suffix= isPassword ? Icons.visibility_outlined: Icons.visibility_off_outlined;
-    emit(ShopChangePasswordVisibilityState());
+
+    emit(ShopChangePasswordRegVisibilityState());
 
 
   }

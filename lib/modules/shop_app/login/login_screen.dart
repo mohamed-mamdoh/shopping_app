@@ -6,6 +6,7 @@ import 'package:shopping_app/modules/shop_app/login/cubit_login/cubit.dart';
 import 'package:shopping_app/modules/shop_app/login/cubit_login/states.dart';
 import 'package:shopping_app/modules/shop_app/register/register_screen.dart';
 import 'package:shopping_app/shared/components/components.dart';
+import 'package:shopping_app/shared/components/constans.dart';
 import 'package:shopping_app/shared/network/local/cache_helper.dart';
 
 
@@ -15,13 +16,13 @@ class LoginScreen extends StatelessWidget {
 
   LoginScreen({super.key});
 
- 
+  var emailController=TextEditingController();
+  var passwordController=TextEditingController();
 
   @override
   Widget build(BuildContext context) {
 
-    var emailController=TextEditingController();
-    var passwordController=TextEditingController();
+
     return BlocProvider(
 
       create: (BuildContext context)=>ShopLoginCubit(),
@@ -34,7 +35,8 @@ class LoginScreen extends StatelessWidget {
             if(state.loginModel.status!){
               print(state.loginModel.message);
               print(state.loginModel.data?.token);
-              CacheHelper.saveData(key:'token', value:state.loginModel.data?.token).then((value) {
+              CacheHelper.saveData(key:'token', value:state.loginModel.data!.token).then((value) {
+                token=state.loginModel.data?.token;
                 navigateAndFinish(context,const ShopLayout());
               });
               showToast(
@@ -139,7 +141,7 @@ class LoginScreen extends StatelessWidget {
                             const Text('Don\t have an account'),
                             defaultTextButton(
                               function: (){
-                                navigateTo(context,const RegisterScreen());
+                                navigateTo(context, RegisterScreen());
                               },
                               text: 'register',
                             ),

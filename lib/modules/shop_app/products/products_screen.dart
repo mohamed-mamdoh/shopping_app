@@ -1,4 +1,5 @@
 
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
@@ -8,20 +9,37 @@ import 'package:shopping_app/models/categories_model/categories_model.dart';
 import 'package:shopping_app/models/cubit_shop/cubit.dart';
 import 'package:shopping_app/models/cubit_shop/states.dart';
 import 'package:shopping_app/models/home_model/home_model.dart';
+import 'package:shopping_app/shared/components/components.dart';
 import 'package:shopping_app/shared/styles/colors.dart';
 
 
 class ProductsScreen extends StatelessWidget {
   const ProductsScreen({Key? key}) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
+
     return BlocConsumer<ShopCubit,ShopStates>(
-       listener: (context,state){},
+       listener: (context,state)
+       {
+         if(state is ShopSuccessChangeFavoritesState )
+         {
+           if(!state.model.status!)
+           {
+             showToast(
+               text:state.model.message!,
+               state:ToastState.error,
+             );
+
+           }
+
+         }
+       },
          builder: (context,state){
          return ConditionalBuilder(
              condition:ShopCubit.get(context).homeModel !=null && ShopCubit.get(context).categoriesModel != null,
-             builder:(context)=>productsBuilder(ShopCubit.get(context).homeModel!,ShopCubit.get(context).categoriesModel!),
+             builder:(context)=>productsBuilder(ShopCubit.get(context).homeModel!,ShopCubit.get(context).categoriesModel!,context),
              fallback:(context)=> const Center(child: CircularProgressIndicator()),
          );
       },
@@ -31,7 +49,7 @@ class ProductsScreen extends StatelessWidget {
 
   }
 
-  Widget productsBuilder(HomeModel model,CategoriesModel categoriesModel )=>SingleChildScrollView(
+  Widget productsBuilder(HomeModel model,CategoriesModel categoriesModel,context )=>SingleChildScrollView(
     physics: const BouncingScrollPhysics(),
      child: Column(
        crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,8 +77,9 @@ class ProductsScreen extends StatelessWidget {
 
     ),
     );
-    }).toList(),
-    options: CarouselOptions(
+       }).toList(),
+           options: CarouselOptions
+             (
     height: 250,
     //aspectRatio: 16/9,
     viewportFraction: 1.0,
@@ -74,7 +93,7 @@ class ProductsScreen extends StatelessWidget {
     enlargeCenterPage: true,
     scrollDirection: Axis.horizontal,
     )
-    ),
+         ),
         const SizedBox(
           height: 10.0,
         ),
@@ -138,10 +157,10 @@ class ProductsScreen extends StatelessWidget {
             crossAxisCount: 2,
             mainAxisSpacing: 1.0,
             crossAxisSpacing: 1.0,
-            childAspectRatio:1/1.58,
+            childAspectRatio:1/1.59,
             children:List.generate(
               model.data!.products.length,
-                  (index) =>buildGridProduct(model.data!.products[index]),
+                  (index) =>buildGridProduct(model.data!.products[index],context),
 
             ),
 
@@ -181,7 +200,8 @@ class ProductsScreen extends StatelessWidget {
 
     ],
   );
-  Widget buildGridProduct(ProductModel model)=>Container(
+  Widget buildGridProduct(ProductModel model,context)=>Container(
+
     color: Colors.white,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,10 +272,20 @@ class ProductsScreen extends StatelessWidget {
                     const Spacer(),
                     IconButton(
                       padding: EdgeInsets.zero,
-                        onPressed:(){},
-                        icon:const Icon(
-                          Icons.favorite_border,
-                         // size: 16.0,
+                        onPressed:()
+                        {
+                          ShopCubit.get(context).changeFavorites(productId:model.id!);
+                          print(model.id);
+                          //print(model.id);
+                        },
+                        icon:CircleAvatar(
+                          radius: 15.0,
+                           backgroundColor: ShopCubit.get(context).favorites[model.id]! ? defaultColor : Colors.grey ,
+                           child: const Icon(
+                            Icons.favorite_border,
+                            color:Colors.white ,
+                           // size: 16.0,
+                          ),
                         ),
                     ),
 

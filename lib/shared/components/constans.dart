@@ -10,7 +10,18 @@ import 'package:shopping_app/modules/shop_app/login/login_screen.dart';
 import 'package:shopping_app/shared/components/components.dart';
 import 'package:shopping_app/shared/network/local/cache_helper.dart';
 
-void sinOut(context){
+
+String? token;
+bool boardingShown = false;
+bool? tokenStatus;
+String? userImage;
+String? userPassword;
+
+Future<String> getUserToken() async
+{
+  return await CacheHelper.getData(key: token);
+}
+void signOut(context){
   CacheHelper.removeData(key:'token').then((value){
     if(value){
       navigateAndFinish(context,LoginScreen(),);
@@ -22,8 +33,4 @@ void printFullText(String text)
   final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
   pattern.allMatches(text).forEach((match) => print(match.group(0)));
 }
-String? token;
-bool boardingShown = false;
-bool? tokenStatus;
-String? userImage;
-String? userPassword;
+
