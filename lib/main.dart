@@ -4,6 +4,8 @@ import 'package:shopping_app/layout/shop_layout/shop_layout.dart';
 import 'package:shopping_app/models/cubit_shop/cubit.dart';
 import 'package:shopping_app/modules/shop_app/login/login_screen.dart';
 import 'package:shopping_app/modules/shop_app/on_boarding/on_boarding_screen.dart';
+import 'package:shopping_app/shared/components/constans.dart';
+
 import 'package:shopping_app/shared/cubit/bloc_observer.dart';
 import 'package:shopping_app/shared/cubit_app/cubit.dart';
 import 'package:shopping_app/shared/cubit_app/states.dart';
@@ -12,16 +14,17 @@ import 'package:shopping_app/shared/styles/themes.dart';
 
 import 'shared/network/local/cache_helper.dart';
 
-void main() async {
+Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer=MyBlocObserver();
-  DioHelper.init();
+  await DioHelper.init();
   await CacheHelper.init();
-  final bool isDark=CacheHelper.getData(key:'isDark');
+  dynamic isDark= CacheHelper.getBoolData(key:'isDark');
   Widget widget;
-  final dynamic onBoarding=CacheHelper.getData(key: 'onBoarding');
-  final dynamic token =CacheHelper.getData(key:' token');
+  dynamic onBoarding=await CacheHelper.getData(key: 'onBoarding');
+  token = await CacheHelper.getData(key: 'token');
+  print(token);
 
   if(onBoarding!=null)
   {
@@ -39,10 +42,10 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final bool isDark;
-  final Widget startWidget;
+   bool isDark;
+   Widget startWidget;
 
-  const MyApp( {super.key, required this.isDark, required this.startWidget});
+   MyApp( {super.key, required this.isDark, required this.startWidget});
 
   // This widget is the root of your application.
 
@@ -53,9 +56,9 @@ class MyApp extends StatelessWidget {
       providers: [
 
         BlocProvider( create: (BuildContext context)=>AppCubit()..changeAppMode(
-          fromShared:!isDark ,
+          fromShared:isDark ,
         ),),
-        BlocProvider( create: (BuildContext context)=>ShopCubit()..getHomeData(),
+        BlocProvider( create: (BuildContext context)=>ShopCubit()..getHomeData()..getCategories()..getFavorites()..getUserData(),
         ),
 
       ],
@@ -66,7 +69,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme:lightTheme ,
             darkTheme:darkTheme,
-            themeMode:AppCubit.get(context).isDark?ThemeMode.dark:ThemeMode.light,
+            themeMode:AppCubit.get(context).isDark?ThemeMode.light:ThemeMode.dark,
             home:startWidget,
           );
         },
