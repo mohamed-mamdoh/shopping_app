@@ -33,7 +33,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   void initState() {
     boarding= [
       BoardingModel(
-          image:'images/onboard.jpg' ,
+          image:'images/onboard_shop.png' ,
           title:'On Board 1 Title',
           body:'On Board 1 Body'),
       BoardingModel(
